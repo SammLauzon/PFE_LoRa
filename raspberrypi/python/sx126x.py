@@ -214,7 +214,7 @@ class sx126x:
 
     def get_settings(self):
         # the pin M1 of lora HAT must be high when enter setting mode and get parameters
-        GPIO.output(M1,GPIO.HIGH)
+        GPIO.output(self.M1,GPIO.HIGH)
         time.sleep(0.1)
         
         # send command to get setting parameters
@@ -230,11 +230,28 @@ class sx126x:
             air_speed_temp = self.get_reg[6] & 0x03
             power_temp = self.get_reg[7] & 0x03
             
+            air_speed_dic = {
+                0x00:"300bps",
+                0x01:"1200bps",
+                0x02:"2400bps",
+                0x03:"4800bps",
+                0x04:"9600bps",
+                0x05:"19200bps",
+                0x06:"38400bps",
+                0x07:"62500bps"
+            }
+            power_dic ={
+                0x00:"22dBm",
+                0x01:"17dBm",
+                0x02:"13dBm",
+                0x03:"10dBm"
+            }
+
             print("Frequence is {0}.125MHz.",fre_temp)
             print("Node address is {0}.",addr_temp)
-            print("Air speed is {0} bps"+ lora_air_speed_dic.get(None,air_speed_temp))
-            print("Power is {0} dBm" + lora_power_dic.get(None,power_temp))
-            GPIO.output(M1,GPIO.LOW)
+            print("Air speed is {0} bps"+ air_speed_dic(air_speed_temp))
+            print("Power is {0} dBm" + power_dic(power_temp))
+            GPIO.output(self.M1,GPIO.LOW)
 
 #
 # the data format like as following
@@ -255,9 +272,10 @@ class sx126x:
         if self.ser.inWaiting() > 0:
             time.sleep(0.5)
             r_buff = self.ser.read(self.ser.inWaiting())
+            message = r_buff[3:-1].decode()
 
             print("receive message from node address with frequence\033[1;32m %d,%d.125MHz\033[0m"%((r_buff[0]<<8)+r_buff[1],r_buff[2]+self.start_freq),end='\r\n',flush = True)
-            print("message is "+str(r_buff[3:-1]),end='\r\n')
+            print("message is "+message,end='\r\n')
             
             # print the rssi
             if self.rssi:
