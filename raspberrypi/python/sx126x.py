@@ -229,6 +229,23 @@ class sx126x:
             addr_temp = self.get_reg[3] + self.get_reg[4]
             air_speed_temp = self.get_reg[6] & 0x03
             power_temp = self.get_reg[7] & 0x03
+
+            air_speed_dic = {
+                0x00:"300bps",
+                0x01:"1200bps",
+                0x02:"2400bps",
+                0x03:"4800bps",
+                0x04:"9600bps",
+                0x05:"19200bps",
+                0x06:"38400bps",
+                0x07:"62500bps"
+            }
+            power_dic ={
+                0x00:"22dBm",
+                0x01:"17dBm",
+                0x02:"13dBm",
+                0x03:"10dBm"
+            }
             
             air_speed_dic = {
                 0x00:"300bps",
