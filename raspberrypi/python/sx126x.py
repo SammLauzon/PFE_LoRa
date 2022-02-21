@@ -247,6 +247,23 @@ class sx126x:
                 0x03:"10dBm"
             }
             
+            air_speed_dic = {
+                0x00:"300bps",
+                0x01:"1200bps",
+                0x02:"2400bps",
+                0x03:"4800bps",
+                0x04:"9600bps",
+                0x05:"19200bps",
+                0x06:"38400bps",
+                0x07:"62500bps"
+            }
+            power_dic ={
+                0x00:"22dBm",
+                0x01:"17dBm",
+                0x02:"13dBm",
+                0x03:"10dBm"
+            }
+
             print("Frequence is {0}.125MHz.",fre_temp)
             print("Node address is {0}.",addr_temp)
             print("Air speed is {0} bps"+ air_speed_dic(air_speed_temp))
