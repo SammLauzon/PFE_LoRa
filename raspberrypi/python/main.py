@@ -16,12 +16,14 @@
 #
 
 import sys
+from tkinter import FALSE
 import sx126x
 import threading
 import time
 import select
 import termios
 import tty
+import numpy as np
 from threading import Timer
 
 old_settings = termios.tcgetattr(sys.stdin)
@@ -96,7 +98,7 @@ def send_deal():
     print(" "*200)
     print('\x1b[3A',end='\r')
 
-def send_cpu_continue(continue_or_not = True):
+def send_cpu_continue( continue_or_not = True):
     if continue_or_not:
         global timer_task
         global seconds
@@ -106,6 +108,7 @@ def send_cpu_continue(continue_or_not = True):
         data = bytes([255]) + bytes([255]) + bytes([18]) + bytes([255]) + bytes([255]) + bytes([12]) + "CPU Temperature:".encode()+str(get_cpu_temp()).encode()+" C".encode()
         node.send(data)
         time.sleep(0.2)
+        #sprint("Sent ")
         timer_task = Timer(seconds,send_cpu_continue)
         timer_task.start()
     else:
@@ -115,10 +118,34 @@ def send_cpu_continue(continue_or_not = True):
         timer_task.cancel()
         pass
 
+def send_data_array():
+
+    file_name = ""
+    data_array = np.random.randint(1000, size=100) #Tableau de 100 int de 0 à 1000
+    data_array = np.append(data_array, -1)
+    print("Enter the test file name:",end='',flush=True)
+    while True:
+        rec = sys.stdin.read(1)
+        if rec != None:
+            if rec == '\x0a': break
+            file_name += rec
+            sys.stdout.write(rec)
+            sys.stdout.flush()
+
+    #print(dataArray)
+    np.savetxt("CSVtests/"+file_name+".csv", data_array, delimiter=",",fmt='%d')
+
+    #for i in dataArray:
+    #    data = bytes([255]) + bytes([255]) + bytes([18]) + bytes([255]) + bytes([255]) + bytes([12]) + str(i).encode()
+    #    node.send(data)
+    #    time.sleep(0.2)
+
+
 try:
     time.sleep(1)
     print("Press \033[1;32mEsc\033[0m to exit")
     print("Press \033[1;32mi\033[0m   to send")
+    print("Press \033[1;32mt\033[0m   to send array data")
     print("Press \033[1;32ms\033[0m   to send cpu temperature every 10 seconds")
     
     # it will send rpi cpu temperature every 10 seconds 
@@ -143,14 +170,18 @@ try:
                 while True:
                     if sys.stdin.read(1) == '\x63':
                         timer_task.cancel()
+                        increments = 0
                         print('\x1b[1A',end='\r')
                         print(" "*100)
                         print('\x1b[1A',end='\r')
                         break
-
+            # detect key t
+            if c== '\x74':
+                send_data_array()
+                print("\ndata sent!")
             sys.stdout.flush()
             
-        node.receive()
+        node.receive(True)
         
         # timer,send messages automatically
         

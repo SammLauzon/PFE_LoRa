@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 import serial
 import time
+import numpy as np
 
 class sx126x:
 
@@ -16,6 +17,7 @@ class sx126x:
     addr = 65535
     serial_n = ""
     addr_temp = 0
+    data_array_received = np.zeros([100,3])
 
     #
     # start frequence of two lora module
@@ -285,23 +287,29 @@ class sx126x:
         time.sleep(0.1)
 
 
-    def receive(self):
+    def receive(self, mode, file_name="Error"):
         if self.ser.inWaiting() > 0:
             time.sleep(0.5)
             r_buff = self.ser.read(self.ser.inWaiting())
             message = r_buff[3:-1].decode()
 
-            print("receive message from node address with frequence\033[1;32m %d,%d.125MHz\033[0m"%((r_buff[0]<<8)+r_buff[1],r_buff[2]+self.start_freq),end='\r\n',flush = True)
-            print("message is "+message,end='\r\n')
-            
-            # print the rssi
-            if self.rssi:
-                # print('\x1b[3A',end='\r')
-                print("the packet rssi value: -{0}dBm".format(256-r_buff[-1:][0]))
-                self.get_channel_rssi()
+            if mode:
+                self.data_array_received = np.append(self.data_array_received, [int(message), 256-r_buff[-1:][0], self.get_channel_rssi()])
+                if int(message) == -1:
+                    np.savetxt("CSVtests/"+file_name+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
+                    print("Array received")
             else:
-                pass
-                #print('\x1b[2A',end='\r')
+                print("receive message from node address with frequence\033[1;32m %d,%d.125MHz\033[0m"%((r_buff[0]<<8)+r_buff[1],r_buff[2]+self.start_freq),end='\r\n',flush = True)
+                print("message is "+message,end='\r\n')
+            
+                # print the rssi
+                if self.rssi:
+                    # print('\x1b[3A',end='\r')
+                    print("the packet rssi value: -{0}dBm".format(256-r_buff[-1:][0]))
+                    self.get_channel_rssi()
+                else:
+                    pass
+                    #print('\x1b[2A',end='\r')
 
     def get_channel_rssi(self):
         GPIO.output(self.M1,GPIO.LOW)
@@ -315,7 +323,8 @@ class sx126x:
             time.sleep(0.1)
             re_temp = self.ser.read(self.ser.inWaiting())
         if re_temp[0] == 0xC1 and re_temp[1] == 0x00 and re_temp[2] == 0x02:
-            print("the current noise rssi value: -{0}dBm".format(256-re_temp[3]))
+            #print("the current noise rssi value: -{0}dBm".format(256-re_temp[3]))
+            return 256-re_temp[3]
             # print("the last receive packet rssi value: -{0}dBm".format(256-re_temp[4]))
         else:
             # pass
