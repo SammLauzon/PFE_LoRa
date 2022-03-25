@@ -106,6 +106,7 @@ def send_cpu_continue( continue_or_not = True):
         # boarcast the cpu temperature at 868.125MHz
         #
         data = bytes([255]) + bytes([255]) + bytes([18]) + bytes([255]) + bytes([255]) + bytes([12]) + "CPU Temperature:".encode()+str(get_cpu_temp()).encode()+" C".encode()
+        #print(data)
         node.send(data)
         time.sleep(0.2)
         #sprint("Sent ")
@@ -121,7 +122,7 @@ def send_cpu_continue( continue_or_not = True):
 def send_data_array():
 
     file_name = ""
-    data_array = np.random.randint(1000, size=100) #Tableau de 100 int de 0 à 1000
+    data_array = np.random.randint(1000, size=10) #Tableau de 100 int de 0 à 1000
     data_array = np.append(data_array, -1)
     print("Enter the test file name:",end='',flush=True)
     while True:
@@ -134,11 +135,14 @@ def send_data_array():
 
     #print(dataArray)
     np.savetxt("CSVtests/"+file_name+".csv", data_array, delimiter=",",fmt='%d')
-
-    #for i in dataArray:
-    #    data = bytes([255]) + bytes([255]) + bytes([18]) + bytes([255]) + bytes([255]) + bytes([12]) + str(i).encode()
-    #    node.send(data)
-    #    time.sleep(0.2)
+    count = 0
+    for i in data_array:
+        print(count)
+        data = bytes([255]) + bytes([255]) + bytes([18]) + bytes([255]) + bytes([255]) + bytes([12]) + str(i).encode()
+        #print(data)
+        node.send(data)
+        time.sleep(2)
+        count+=1
 
 
 try:

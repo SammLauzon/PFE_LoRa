@@ -17,7 +17,7 @@ class sx126x:
     addr = 65535
     serial_n = ""
     addr_temp = 0
-    data_array_received = np.zeros([100,3])
+    data_array_received = np.zeros((1,3))
 
     #
     # start frequence of two lora module
@@ -294,7 +294,8 @@ class sx126x:
             message = r_buff[3:-1].decode()
 
             if mode:
-                self.data_array_received = np.append(self.data_array_received, [int(message), 256-r_buff[-1:][0], self.get_channel_rssi()])
+                print("Recu")
+                self.data_array_received = np.append(self.data_array_received, [[int(message), 256-r_buff[-1:][0], self.get_channel_rssi()]], axis=0)
                 if int(message) == -1:
                     np.savetxt("CSVtests/"+file_name+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
                     print("Array received")
