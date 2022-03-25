@@ -296,8 +296,8 @@ class sx126x:
             if mode:
                 print("Recu")
                 self.data_array_received = np.append(self.data_array_received, [[int(message), 256-r_buff[-1:][0], self.get_channel_rssi()]], axis=0)
-                if int(message) == -1 or save_file:
-                    np.savetxt("CSVtests/"+file_name_receive+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
+                if int(message) == -1:
+                    np.savetxt("CSVtests/"+file_name_receive+"_receive.csv", self.data_array_received, delimiter=",",fmt='%d')
                     print("Array received")
             else:
                 print("receive message from node address with frequence\033[1;32m %d,%d.125MHz\033[0m"%((r_buff[0]<<8)+r_buff[1],r_buff[2]+self.start_freq),end='\r\n',flush = True)
@@ -311,6 +311,11 @@ class sx126x:
                 else:
                     pass
                     #print('\x1b[2A',end='\r')
+
+        elif save_file == True:
+            print(file_name_receive)
+            np.savetxt("CSVtests/"+file_name_receive+"_receive.csv", self.data_array_received, delimiter=",",fmt='%d')
+            print("Array received")
 
     def get_channel_rssi(self):
         GPIO.output(self.M1,GPIO.LOW)

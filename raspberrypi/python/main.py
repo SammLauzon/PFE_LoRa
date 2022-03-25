@@ -67,6 +67,7 @@ def get_cpu_temp():
 # node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=433,addr=0,power=22,rssi=False,air_speed=2400,relay=False)
 node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=868,addr=0,power=22,rssi=True,air_speed=1200,relay=False)
 save_file = False
+file_name_receive = ""
 
 def send_deal():
     get_rec = ""
@@ -152,6 +153,8 @@ try:
     print("Press \033[1;32mi\033[0m   to send")
     print("Press \033[1;32mt\033[0m   to send array data")
     print("Press \033[1;32ms\033[0m   to send cpu temperature every 10 seconds")
+    print("Press \033[1;32mr\033[0m   to configure receive file")
+    print("Press \033[1;32mq\033[0m   to configure receive save array")
     
     # it will send rpi cpu temperature every 10 seconds 
     seconds = 1
@@ -187,6 +190,7 @@ try:
             sys.stdout.flush()
 
             if c== '\x72':
+                print("Enter the test file name:",end='',flush=True)
                 file_name_receive = ""
                 while True:
                     rec = sys.stdin.read(1)
@@ -195,13 +199,16 @@ try:
                         file_name_receive += rec
                         sys.stdout.write(rec)
                         sys.stdout.flush()
-
-            if c== '\x72':
+                print(file_name_receive)
+            if c== 'q': 
                 save_file = True
 
-            
+        
         node.receive(True, file_name_receive, save_file)
         
+        if save_file == True:
+            break
+
         # timer,send messages automatically
         
 except:
