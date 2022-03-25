@@ -287,7 +287,7 @@ class sx126x:
         time.sleep(0.1)
 
 
-    def receive(self, mode, file_name="Error"):
+    def receive(self, mode, file_name_receive):
         if self.ser.inWaiting() > 0:
             time.sleep(0.5)
             r_buff = self.ser.read(self.ser.inWaiting())
@@ -297,7 +297,7 @@ class sx126x:
                 print("Recu")
                 self.data_array_received = np.append(self.data_array_received, [[int(message), 256-r_buff[-1:][0], self.get_channel_rssi()]], axis=0)
                 if int(message) == -1:
-                    np.savetxt("CSVtests/"+file_name+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
+                    np.savetxt("CSVtests/"+file_name_receive+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
                     print("Array received")
             else:
                 print("receive message from node address with frequence\033[1;32m %d,%d.125MHz\033[0m"%((r_buff[0]<<8)+r_buff[1],r_buff[2]+self.start_freq),end='\r\n',flush = True)

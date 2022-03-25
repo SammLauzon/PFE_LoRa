@@ -184,8 +184,19 @@ try:
                 send_data_array()
                 print("\ndata sent!")
             sys.stdout.flush()
+
+            if c== '\x72':
+                file_name_receive = ""
+                while True:
+                    rec = sys.stdin.read(1)
+                    if rec != None:
+                        if rec == '\x0a': break
+                            file_name_receive += rec
+                            sys.stdout.write(rec)
+                            sys.stdout.flush()
+
             
-        node.receive(True)
+        node.receive(True, file_name_receive)
         
         # timer,send messages automatically
         
