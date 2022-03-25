@@ -192,12 +192,12 @@ try:
                     rec = sys.stdin.read(1)
                     if rec != None:
                         if rec == '\x0a': break
-                            file_name_receive += rec
-                            sys.stdout.write(rec)
-                            sys.stdout.flush()
+                        file_name_receive += rec
+                        sys.stdout.write(rec)
+                        sys.stdout.flush()
 
             if c== '\x72':
-                save_file = true
+                save_file = True
 
             
         node.receive(True, file_name_receive, save_file)
