@@ -287,7 +287,7 @@ class sx126x:
         time.sleep(0.1)
 
 
-    def receive(self, mode, file_name_receive):
+    def receive(self, mode, file_name_receive, save_file):
         if self.ser.inWaiting() > 0:
             time.sleep(0.5)
             r_buff = self.ser.read(self.ser.inWaiting())
@@ -296,7 +296,7 @@ class sx126x:
             if mode:
                 print("Recu")
                 self.data_array_received = np.append(self.data_array_received, [[int(message), 256-r_buff[-1:][0], self.get_channel_rssi()]], axis=0)
-                if int(message) == -1:
+                if int(message) == -1 or save_file:
                     np.savetxt("CSVtests/"+file_name_receive+"_receive"+".csv", self.data_array_received, delimiter=",",fmt='%d')
                     print("Array received")
             else:

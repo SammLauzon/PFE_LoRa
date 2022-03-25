@@ -66,6 +66,7 @@ def get_cpu_temp():
 
 # node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=433,addr=0,power=22,rssi=False,air_speed=2400,relay=False)
 node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=868,addr=0,power=22,rssi=True,air_speed=1200,relay=False)
+save_file = False
 
 def send_deal():
     get_rec = ""
@@ -195,8 +196,11 @@ try:
                             sys.stdout.write(rec)
                             sys.stdout.flush()
 
+            if c== '\x72':
+                save_file = true
+
             
-        node.receive(True, file_name_receive)
+        node.receive(True, file_name_receive, save_file)
         
         # timer,send messages automatically
         
