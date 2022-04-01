@@ -65,7 +65,7 @@ def get_cpu_temp():
 #
 
 # node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=433,addr=0,power=22,rssi=False,air_speed=2400,relay=False)
-node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=868,addr=0,power=22,rssi=True,air_speed=1200,relay=False)
+node = sx126x.sx126x(serial_num = "/dev/ttyS0",freq=868,addr=65535,power=22,rssi=True,air_speed=1200,relay=False)
 save_file = False
 file_name_receive = ""
 
@@ -124,7 +124,7 @@ def send_cpu_continue( continue_or_not = True):
 def send_data_array():
 
     file_name = ""
-    data_array = np.random.randint(1000, size=10) #Tableau de 100 int de 0 à 1000
+    data_array = np.random.randint(1000, size=50) #Tableau de 50 int de 0 à 1000
     data_array = np.append(data_array, -1)
     print("Enter the test file name:",end='',flush=True)
     while True:
